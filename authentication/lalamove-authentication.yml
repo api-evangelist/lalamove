@@ -1,0 +1,85 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.lalamove.com/ (Authentication section)
+description: >-
+  Lalamove Delivery API v3 authenticates every request with an HMAC SHA256
+  request signature rather than a bearer token or OAuth flow. Credentials are a
+  paired API KEY and API SECRET issued per market through the Partner Portal.
+  Because the signature covers the timestamp, method, path and body, credentials
+  are never transmitted in a replayable form and there is no token endpoint,
+  refresh flow, or scope surface.
+base_urls:
+  production: https://rest.lalamove.com/v3
+  sandbox: https://rest.sandbox.lalamove.com/v3
+transport:
+  https_required: true
+  note: All requests must use HTTPS; plain HTTP calls fail.
+schemes:
+  - id: hmac-sha256
+    type: http
+    scheme: hmac
+    in: header
+    header: Authorization
+    format: "hmac {KEY}:{TIMESTAMP}:{SIGNATURE}"
+    example: "hmac pk_test_key:1545880607433:5133946c6a0ba259..."
+    signing:
+      algorithm: HMAC-SHA256
+      encoding: lowercase hexadecimal (base 16)
+      secret: API SECRET
+      raw_signature_template: "{TIMESTAMP}\\r\\n{HTTP_METHOD}\\r\\n{PATH}\\r\\n\\r\\n{BODY}"
+      steps:
+        - Generate a Unix timestamp in milliseconds (e.g. 1545880607433).
+        - >-
+          Build the raw signature string
+          {TIMESTAMP}\r\n{METHOD}\r\n{PATH}\r\n\r\n{BODY}. For GET requests the
+          body segment is omitted.
+        - Compute HmacSHA256(rawSignature, API_SECRET).
+        - Render the digest as lowercase hex.
+        - >-
+          Assemble the Authorization header as
+          hmac {API_KEY}:{TIMESTAMP}:{SIGNATURE}. The timestamp in the header
+          MUST match the timestamp used to build the signature.
+credentials:
+  api_key:
+    sandbox_prefix: pk_test
+    production_prefix: pk_prod
+  api_secret:
+    sandbox_prefix: sk_test
+    production_prefix: sk_prod
+  issuance: https://partnerportal.lalamove.com (Developers tab)
+  note: >-
+    Production credentials are released only after the production wallet is
+    topped up. Sandbox credentials require no approval.
+required_headers:
+  - name: Authorization
+    required: true
+    description: HMAC credential triplet — hmac {KEY}:{TIMESTAMP}:{SIGNATURE}
+  - name: Market
+    required: true
+    description: >-
+      Target market in UN/LOCODE form (HK, SG, MY, TH, PH, ID, VN, TW, JP, MX,
+      BR). Scopes the request to one market's fleet, pricing and service types.
+  - name: Request-ID
+    required: true
+    description: >-
+      Client-generated nonce/UUID. Used as the request's unique identifier for
+      support and tracing. NOT an idempotency key — the documentation does not
+      describe it as deduplicating or replaying repeated requests.
+  - name: Content-Type
+    required: true
+    description: application/json
+oauth2: false
+oidc: false
+scopes:
+  supported: false
+  note: >-
+    Key-and-secret HMAC auth has no scope or permission surface, so no
+    scopes/ artifact is produced for this provider.
+mtls: false
+webhook_authentication:
+  note: >-
+    Webhook delivery is configured by URL through PATCH /v3/webhook or the
+    Partner Portal. The public documentation reviewed does not describe a
+    signature header for verifying inbound webhook payloads; consumers should
+    confirm current webhook verification guidance with partner.support@lalamove.com.
+docs: https://developers.lalamove.com/

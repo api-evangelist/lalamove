@@ -1,0 +1,82 @@
+generated: '2026-07-19'
+method: derived
+status: candidate
+source: >-
+  Derived from the documented endpoint surface on https://developers.lalamove.com/.
+  No official Lalamove MCP server exists — searched the developer portal, the npm
+  @lalamove scope, and all 70 public repositories in the lalamove GitHub
+  organization. This is a CANDIDATE tool design, not a published server, and no
+  MCPServer pointer is emitted in apis.yml.
+description: >-
+  Candidate MCP tool surface for the Lalamove Delivery API v3, mapped one tool
+  per documented operation. Every tool below corresponds to a real, documented
+  method+path; none are invented. An implementer must supply HMAC SHA256 request
+  signing and the Market header, both of which are agent-hostile in the sense
+  that they cannot be satisfied by a bearer token alone.
+server:
+  name: lalamove
+  published: false
+  transport: null
+  url: null
+search_evidence:
+  - probed: https://developers.lalamove.com/
+    result: no MCP server referenced
+  - probed: npm @lalamove scope
+    result: only @lalamove/lalamove-js (Node.js delivery SDK), no MCP package
+  - probed: https://github.com/lalamove (70 public repos)
+    result: no MCP server repository
+authentication_note: >-
+  Any MCP implementation must sign each request with HMAC-SHA256 over
+  {TIMESTAMP}\r\n{METHOD}\r\n{PATH}\r\n\r\n{BODY} and send the Market header.
+  Credentials are a key/secret pair, so the server must hold the secret — it
+  cannot delegate to a user-presented OAuth token.
+consequence_note: >-
+  place_order, cancel_order, change_driver and add_priority_fee all spend real
+  money from a prepaid market wallet and dispatch physical couriers. These are
+  high-consequence write operations and should require explicit human
+  confirmation rather than autonomous agent invocation.
+tools:
+  - name: get_quotation
+    description: Request a delivery quotation for a route of stops in a market.
+    source_operation: POST /v3/quotations
+    consequence: low
+  - name: get_quotation_details
+    description: Retrieve a previously created quotation by ID.
+    source_operation: GET /v3/quotations/{quotationId}
+    consequence: low
+  - name: place_order
+    description: Place a delivery order against a quotation ID.
+    source_operation: POST /v3/orders
+    consequence: high
+  - name: get_order_details
+    description: Retrieve an order's details and current lifecycle status.
+    source_operation: GET /v3/orders/{orderId}
+    consequence: low
+  - name: edit_order
+    description: Edit drop-off locations on an order before pickup.
+    source_operation: PATCH /v3/orders/{orderId}
+    consequence: medium
+  - name: cancel_order
+    description: Cancel an order within the cancellation policy window.
+    source_operation: DELETE /v3/orders/{orderId}
+    consequence: high
+  - name: get_driver_details
+    description: Retrieve details of the driver assigned to an order.
+    source_operation: GET /v3/orders/{orderId}/drivers/{driverId}
+    consequence: low
+  - name: change_driver
+    description: Request a different driver for an order (15+ min after match, pre-pickup).
+    source_operation: DELETE /v3/orders/{orderId}/drivers/{driverId}
+    consequence: high
+  - name: add_priority_fee
+    description: Add or increase the priority fee (tip) on an order.
+    source_operation: POST /v3/orders/{orderId}/priority-fee
+    consequence: high
+  - name: get_city_info
+    description: Fetch a market's supported cities, service types and special request configuration.
+    source_operation: GET /v3/cities
+    consequence: low
+  - name: set_webhook
+    description: Configure the partner webhook URL for a market.
+    source_operation: PATCH /v3/webhook
+    consequence: medium

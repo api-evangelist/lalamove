@@ -1,0 +1,73 @@
+generated: '2026-07-19'
+method: searched
+source: Direct HTTPS probes of each Lalamove host, 2026-07-19.
+description: >-
+  Well-known discovery probe across every Lalamove host in apis.yml and the
+  documented API base hosts. No well-known document was found. Note the
+  important caveat below: partnerportal.lalamove.com returns HTTP 200 for every
+  path, but the body is the single-page-app HTML shell
+  (content-type text/html) — these are soft 404s, not real documents. No raw
+  files were saved and no WellKnown/SecurityTxt pointer is emitted, because
+  nothing is genuinely published.
+result: none
+soft_404_warning: >-
+  partnerportal.lalamove.com serves its SPA index.html with HTTP 200 for any
+  unmatched path (verified: content-type text/html, body begins <!DOCTYPE html>
+  with data-van-project="bfe-hop-partnerportal-web"). Status codes from that host
+  MUST NOT be read as document presence.
+hosts:
+  - host: https://developers.lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 403}
+      - {path: /.well-known/openid-configuration, status: 403}
+      - {path: /.well-known/oauth-authorization-server, status: 403}
+      - {path: /.well-known/api-catalog, status: 403}
+      - {path: /.well-known/ai-plugin.json, status: 403}
+      - {path: /llms.txt, status: 403}
+    note: >-
+      Host returns 403 to automated clients (bot protection); the documentation
+      itself is reachable in a browser. 403 here is inconclusive rather than a
+      confirmed absence.
+  - host: https://www.lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: https://lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: https://rest.lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: https://rest.sandbox.lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: https://partnerportal.lalamove.com
+    documents:
+      - {path: /.well-known/security.txt, status: 200, real: false, reason: SPA HTML shell}
+      - {path: /.well-known/openid-configuration, status: 200, real: false, reason: SPA HTML shell}
+      - {path: /.well-known/oauth-authorization-server, status: 200, real: false, reason: SPA HTML shell}
+      - {path: /.well-known/api-catalog, status: 200, real: false, reason: SPA HTML shell}
+      - {path: /.well-known/ai-plugin.json, status: 200, real: false, reason: SPA HTML shell}
+      - {path: /llms.txt, status: 200, real: false, reason: SPA HTML shell}
+security_txt:
+  found: false
+  note: No RFC 9116 security.txt on any Lalamove host.

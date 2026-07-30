@@ -1,0 +1,83 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developers.lalamove.com/ (SDK section), https://registry.npmjs.org/@lalamove/lalamove-js,
+  https://github.com/lalamove, https://packagist.org/search.json?q=lalamove.
+  Registry HTTP status recorded at fetch time; npmjs.com front-end returns 403 to
+  automated clients, so the npm entry was confirmed via registry.npmjs.org.
+description: >-
+  First-party Lalamove client libraries. Lalamove ships one published SDK package
+  (Node.js/TypeScript on npm) plus a PHP SDK source repository under its own
+  GitHub organization, and a multi-language collection of REST API code examples.
+  Numerous third-party Lalamove PHP clients exist on Packagist; those are listed
+  separately as community packages and are NOT marked official.
+packages:
+  - language: javascript
+    registry: npm
+    name: "@lalamove/lalamove-js"
+    url: https://www.npmjs.com/package/@lalamove/lalamove-js
+    source: https://github.com/lalamove/delivery-nodejs-sdk
+    install: npm install @lalamove/lalamove-js
+    version: 1.1.0
+    official: true
+    note: >-
+      Published under the Lalamove npm scope and built from the
+      lalamove/delivery-nodejs-sdk repository in the official Lalamove GitHub
+      organization. Confirmed via registry.npmjs.org (dist-tags.latest = 1.1.0).
+  - language: php
+    registry: packagist
+    name: lalamove-api/delivery-sdk
+    url: https://packagist.org/packages/lalamove-api/delivery-sdk
+    source: https://github.com/lalamove/delivery-php-sdk
+    install: composer require lalamove-api/delivery-sdk
+    official: true
+    note: >-
+      Source repository lives in the official lalamove GitHub organization, but
+      the Packagist listing self-describes as "Unofficial sdk for Lalamove's API.
+      WIP" and has minimal downloads. Treat as first-party but experimental.
+code_examples:
+  - name: lalamove/api-examples
+    url: https://github.com/lalamove/api-examples
+    description: >-
+      Collection of simple examples of using the Lalamove REST API in different
+      languages. Not installable packages — reference implementations of the HMAC
+      signing and the quotation/order flow.
+    languages: [c_sharp, go, java, nodejs, php, python, ruby]
+    official: true
+community_packages:
+  - language: php
+    registry: packagist
+    name: foodkit/lalamove-php-api
+    url: https://packagist.org/packages/foodkit/lalamove-php-api
+    official: false
+  - language: php
+    registry: packagist
+    name: lalamove/php
+    url: https://packagist.org/packages/lalamove/php
+    source: https://github.com/yamdraco/lalamove-php
+    official: false
+    note: >-
+      Packagist vendor name is "lalamove" but the backing repository is a
+      personal account (yamdraco), not the Lalamove GitHub organization.
+  - language: php
+    registry: packagist
+    name: laraditz/courier-lalamove
+    url: https://packagist.org/packages/laraditz/courier-lalamove
+    official: false
+registries_probed:
+  - registry: npm
+    result: "@lalamove/lalamove-js found (200 via registry.npmjs.org)"
+  - registry: pypi
+    result: "404 — no official Lalamove Python package (pypi.org/pypi/lalamove/json)"
+  - registry: packagist
+    result: first-party lalamove-api/delivery-sdk plus several community packages
+  - registry: rubygems
+    result: no first-party package found
+  - registry: maven-central
+    result: no first-party package found
+  - registry: nuget
+    result: no first-party package found
+  - registry: crates.io
+    result: no first-party package found
+  - registry: pkg.go.dev
+    result: no first-party client package found

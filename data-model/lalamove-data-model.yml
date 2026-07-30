@@ -1,0 +1,157 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  Derived from the documented endpoint surface and object references on
+  https://developers.lalamove.com/ (no OpenAPI is published, so the entity graph
+  is derived from the documented resources, path parameters and order flow rather
+  than from $ref links).
+description: >-
+  Entity-relationship graph for the Lalamove Delivery API v3. The domain is
+  small and flow-shaped: a Quotation prices a route of Stops in a Market, an
+  Order is placed against exactly one Quotation, a Driver is assigned to an
+  Order, and a PriorityFee raises an Order's total to speed matching. City
+  configuration is reference data that constrains what a Quotation may request.
+entities:
+  - name: Quotation
+    id_field: quotationId
+    description: >-
+      A priced, time-limited offer for a specific route. Created with
+      POST /v3/quotations and retrieved with GET /v3/quotations/{quotationId}.
+      Expires — a stale quotationId yields ERR_INVALID_QUOTATION_ID.
+    operations:
+      - POST /v3/quotations
+      - GET /v3/quotations/{quotationId}
+    relationships:
+      - type: has_many
+        target: Stop
+        via: stops
+      - type: belongs_to
+        target: Market
+        via: Market header
+      - type: has_one
+        target: ServiceType
+        via: serviceType
+  - name: Stop
+    description: >-
+      A pickup or drop-off location on a route, addressed by coordinates and/or
+      address text plus a contact. A quotation requires at least 2 stops
+      (ERR_INSUFFICIENT_STOPS) and permits at most 1 pickup plus 15 drop-offs
+      (ERR_TOO_MANY_STOPS).
+    relationships:
+      - type: belongs_to
+        target: Quotation
+        via: stops
+      - type: belongs_to
+        target: Order
+        via: stops
+  - name: Order
+    id_field: orderId
+    description: >-
+      A committed delivery placed against a quotation. Carries the lifecycle
+      status (ASSIGNING_DRIVER, ON_GOING, PICKED_UP, COMPLETED, CANCELED,
+      REJECTED, EXPIRED). Order ID length changed from 12 to 19 digits in
+      April 2025.
+    operations:
+      - POST /v3/orders
+      - GET /v3/orders/{orderId}
+      - PATCH /v3/orders/{orderId}
+      - DELETE /v3/orders/{orderId}
+    relationships:
+      - type: belongs_to
+        target: Quotation
+        via: quotationId
+      - type: has_many
+        target: Stop
+        via: stops
+      - type: has_one
+        target: Driver
+        via: driverId
+      - type: has_many
+        target: PriorityFee
+        via: priority-fee
+      - type: belongs_to
+        target: Market
+        via: Market header
+  - name: Driver
+    id_field: driverId
+    description: >-
+      The courier assigned to an order. Readable from 1 hour before a scheduled
+      pickup or after driver arrival. Replaceable from 15 minutes after matching
+      until pickup.
+    operations:
+      - GET /v3/orders/{orderId}/drivers/{driverId}
+      - DELETE /v3/orders/{orderId}/drivers/{driverId}
+    relationships:
+      - type: belongs_to
+        target: Order
+        via: orderId
+  - name: PriorityFee
+    description: >-
+      A tip added to an order to improve driver matching. Must be higher than any
+      previous priority fee and within the market's min/max bounds
+      (ERR_INVALID_TIPS, ERR_EXCEED_MIN_TIPS, ERR_EXCEED_MAX_TIPS).
+    operations:
+      - POST /v3/orders/{orderId}/priority-fee
+    relationships:
+      - type: belongs_to
+        target: Order
+        via: orderId
+  - name: City
+    description: >-
+      Reference data describing the service types, special requests and
+      configuration available in a market. Constrains what a valid quotation may
+      request (ERR_INVALID_SERVICE_TYPE, ERR_INVALID_SPECIAL_REQUEST).
+    operations:
+      - GET /v3/cities
+    relationships:
+      - type: belongs_to
+        target: Market
+        via: Market header
+      - type: has_many
+        target: ServiceType
+        via: serviceTypes
+  - name: ServiceType
+    description: >-
+      A vehicle/service class available in a market (motorcycle, car, van, truck
+      classes vary by market). Enumerated per market via GET /v3/cities.
+    relationships:
+      - type: belongs_to
+        target: City
+        via: serviceTypes
+  - name: Market
+    id_field: Market header (UN/LOCODE)
+    description: >-
+      The top-level partition of the whole data model. Every entity above exists
+      within exactly one market; credentials, wallet balance, pricing, service
+      types and webhook configuration are all market-scoped.
+    values: [HK, SG, MY, TH, PH, ID, VN, TW, JP, MX, BR]
+  - name: Wallet
+    description: >-
+      The partner's prepaid balance for a market. Insufficient balance blocks
+      order placement (HTTP 402 / ERR_INSUFFICIENT_CREDIT). Balance changes emit
+      the WALLET_BALANCE_CHANGED webhook.
+    relationships:
+      - type: belongs_to
+        target: Market
+        via: Market header
+  - name: Webhook
+    description: >-
+      The partner-configured callback URL for a market, set via PATCH /v3/webhook
+      or the Partner Portal. Receives the ten documented order lifecycle events.
+    operations:
+      - PATCH /v3/webhook
+    relationships:
+      - type: belongs_to
+        target: Market
+        via: Market header
+    detail: asyncapi/lalamove-delivery-webhooks.yml
+primary_flow:
+  - POST /v3/quotations — price the route
+  - POST /v3/orders — commit the quotation into a delivery
+  - GET /v3/orders/{orderId} — poll status (or receive ORDER_STATUS_CHANGED webhook)
+  - GET /v3/orders/{orderId}/drivers/{driverId} — retrieve the assigned courier
+id_prefixes:
+  found: false
+  note: >-
+    No documented id-prefix convention (unlike e.g. Stripe's obj_ prefixes).
+    Order IDs are numeric strings, 19 digits since April 2025.

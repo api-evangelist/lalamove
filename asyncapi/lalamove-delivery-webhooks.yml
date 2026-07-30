@@ -1,0 +1,71 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.lalamove.com/ (Webhooks section)
+type: Webhooks
+description: >-
+  Lalamove pushes delivery lifecycle events to a partner-configured webhook URL.
+  Lalamove does NOT publish an AsyncAPI document, so this artifact captures the
+  webhook event catalog directly from the provider's documentation rather than
+  fabricating a spec. No AsyncAPI file is written for this provider.
+asyncapi_published: false
+asyncapi_search:
+  - probed: https://developers.lalamove.com/ (docs event/webhook sections)
+    result: webhook catalog documented, no AsyncAPI document offered
+  - probed: https://github.com/lalamove (70 public repos enumerated via GitHub API)
+    result: no AsyncAPI/event-schema repository
+configuration:
+  mechanism:
+    - method: PATCH
+      path: /v3/webhook
+      description: Set or update the webhook URL for the market.
+    - portal: https://partnerportal.lalamove.com
+      description: Configure the webhook URL through the Partner Portal UI.
+  receiver_requirements:
+    response: Must return HTTP 200.
+    failure_behavior: A non-200 response raises ERR_INVALID_RESPONSE.
+  scoping: >-
+    Webhook configuration is per market — a partner operating in several markets
+    configures a webhook URL for each.
+  verification: >-
+    The public documentation reviewed does not describe a signature header for
+    verifying webhook authenticity. Confirm current verification guidance with
+    partner.support@lalamove.com before treating payloads as trusted.
+events:
+  - name: ORDER_CREATED
+    description: An order was created via the API.
+  - name: ORDER_STATUS_CHANGED
+    description: >-
+      The order moved to a new lifecycle status (ASSIGNING_DRIVER, ON_GOING,
+      PICKED_UP, COMPLETED, CANCELED, REJECTED, EXPIRED).
+  - name: DRIVER_ASSIGNED
+    description: A driver accepted and was assigned to the order.
+  - name: ORDER_AMOUNT_CHANGED
+    description: The order total changed, for example when a priority fee/tip was added.
+  - name: ORDER_REPLACED
+    description: Customer service replaced the order.
+  - name: ORDER_EDITED
+    description: The order was edited via the API (e.g. drop-off locations changed).
+  - name: WALLET_BALANCE_CHANGED
+    description: The partner wallet balance was modified.
+  - name: POD_STATUS_CHANGED
+    description: Proof-of-delivery status was updated.
+  - name: POP_STATUS_CHANGED
+    description: Proof-of-pickup status was updated.
+  - name: DELIVERY_CODE_STATUS_CHANGED
+    description: A delivery code event occurred.
+order_statuses:
+  - id: ASSIGNING_DRIVER
+    description: The system is matching the delivery with a driver.
+  - id: ON_GOING
+    description: A driver accepted the order and is en route to pickup.
+  - id: PICKED_UP
+    description: The driver collected the package.
+  - id: COMPLETED
+    description: Delivery succeeded; the transaction is concluded.
+  - id: CANCELED
+    description: The order was canceled within the policy window.
+  - id: REJECTED
+    description: The order was rejected twice and is no longer broadcast to drivers.
+  - id: EXPIRED
+    description: Two hours elapsed without a driver accepting the order.
+docs: https://developers.lalamove.com/

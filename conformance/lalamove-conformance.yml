@@ -1,0 +1,86 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  Derived from https://developers.lalamove.com/ (authentication, errors,
+  webhooks, rate limits sections) and the probes recorded in
+  well-known/lalamove-well-known.yml. No compliance certification claims
+  (SOC 2 / ISO 27001 / PCI DSS) were found on the developer portal, so no
+  Compliance pointer is emitted.
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      Authentication is HMAC SHA256 request signing with a key/secret pair. There
+      is no authorization server, token endpoint, or grant flow.
+  - id: oidc
+    conforms: false
+    evidence: >-
+      No /.well-known/openid-configuration on any Lalamove host — www, rest,
+      rest.sandbox and developers all returned 404 or a non-JSON SPA fallback.
+  - id: hmac-request-signing
+    conforms: true
+    evidence: >-
+      Authorization: hmac {KEY}:{TIMESTAMP}:{SIGNATURE} over
+      {TIMESTAMP}\r\n{METHOD}\r\n{PATH}\r\n\r\n{BODY} using HMAC-SHA256
+      (developers.lalamove.com Authentication section).
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      Errors use a custom {"errors": [{"id","message","detail"}]} envelope with
+      application/json, not application/problem+json.
+  - id: idempotency
+    conforms: false
+    evidence: >-
+      No idempotency key or replay semantics are documented. The required
+      Request-ID header is documented as a support/tracing nonce, not a
+      deduplication key.
+  - id: pagination
+    conforms: false
+    evidence: >-
+      No pagination parameters or response fields are documented; read endpoints
+      are single-resource lookups or a market configuration list.
+  - id: rate-limit-headers
+    conforms: partial
+    evidence: >-
+      Rate limits are signaled via RateLimit-Limit-Post{API} /
+      RateLimit-Remaining-Post{API} / RateLimit-Reset-Post{API}. These are
+      per-endpoint variants rather than the plain RateLimit-Limit /
+      RateLimit-Remaining / RateLimit-Reset fields of the IETF RateLimit header
+      draft, so the naming does not match the draft convention.
+  - id: webhook-signing
+    conforms: false
+    evidence: >-
+      No webhook signature header is documented for verifying inbound payload
+      authenticity; the documented receiver contract is only that it must return
+      HTTP 200.
+  - id: unlocode
+    conforms: true
+    evidence: >-
+      The required Market header uses UN/LOCODE country codes (HK, SG, MY, TH,
+      PH, ID, VN, TW, JP, MX, BR).
+  - id: semantic-versioning
+    conforms: false
+    evidence: >-
+      Versioning is a URI path major version (v3) with a month-dated narrative
+      changelog; no semver identifiers are published.
+  - id: rfc8594-sunset
+    conforms: false
+    evidence: No Sunset or Deprecation response headers and no published deprecation policy.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      No OpenAPI/Swagger description is published. Searched the developer portal
+      and all 70 public repos in the lalamove GitHub organization; none found.
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      A ten-event webhook catalog is documented but no AsyncAPI document is
+      published. See asyncapi/lalamove-delivery-webhooks.yml.
+compliance_claims:
+  found: false
+  note: >-
+    No SOC 2, ISO 27001, PCI DSS, GDPR or other certification claims were located
+    on developers.lalamove.com. Absence of a published claim is not evidence of
+    absence of the program — it is evidence the developer surface does not
+    advertise one.
+docs: https://developers.lalamove.com/

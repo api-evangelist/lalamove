@@ -1,0 +1,56 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.lalamove.com/ (Sandbox / Getting on Board sections)
+description: >-
+  Lalamove publishes a fully separate sandbox environment on its own hostname
+  with its own credential prefixes. Sandbox access requires no approval — a
+  partner pulls test keys from the Partner Portal Developers tab and can place
+  simulated orders immediately. No test cards, magic identifiers or time-travel
+  fixtures are documented; only values published by Lalamove are recorded here.
+environments:
+  - name: sandbox
+    base_url: https://rest.sandbox.lalamove.com/v3
+    api_key_prefix: pk_test
+    api_secret_prefix: sk_test
+    approval_required: false
+    note: No additional approvals are required to begin testing.
+  - name: production
+    base_url: https://rest.lalamove.com/v3
+    api_key_prefix: pk_prod
+    api_secret_prefix: sk_prod
+    approval_required: true
+    note: >-
+      Production credentials are released only after the production wallet is
+      topped up in the Partner Portal, and after notifying
+      partner.support@lalamove.com of readiness.
+credentials:
+  source: https://partnerportal.lalamove.com (Developers tab)
+  separation: >-
+    Sandbox and production credentials are distinct key/secret pairs
+    distinguished by prefix, and the environments are on separate hostnames —
+    a sandbox key cannot reach production.
+rate_limits:
+  note: >-
+    Sandbox rate limits are materially lower than production (e.g. Place Order
+    30/min in sandbox vs 100/min in production; Get Order Details 50/min vs
+    300/min). Load testing against sandbox will not reflect production headroom.
+  detail: conventions/lalamove-conventions.yml
+test_data:
+  test_cards: null
+  magic_identifiers: null
+  time_simulation: null
+  fixtures_or_triggers: null
+  note: >-
+    The documentation reviewed publishes no test card numbers, magic phone
+    numbers/addresses, driver simulators, time-travel clocks or webhook trigger
+    tooling. Sandbox order progression behavior is not documented. Confirm with
+    partner.support@lalamove.com how to drive an order through its lifecycle
+    statuses in sandbox.
+testing_guidance:
+  - Use GET /v3/cities against the sandbox host to enumerate valid service types and special requests per market before quoting.
+  - Quotations are short-lived; re-quote rather than reusing a stale quotationId (ERR_INVALID_QUOTATION_ID).
+  - >-
+    Because no idempotency key is supported, exercise timeout/retry paths
+    carefully in sandbox and reconcile with GET /v3/orders/{orderId} rather than
+    blind-retrying POST /v3/orders.
+docs: https://developers.lalamove.com/

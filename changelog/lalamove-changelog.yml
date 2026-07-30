@@ -1,0 +1,52 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.lalamove.com/ (Changelog section)
+description: >-
+  Structured capture of the Lalamove Delivery API changelog. Lalamove publishes a
+  month-dated changelog on the developer portal covering April 2026 back to March
+  2022, with no separate version identifiers — the API stays on v3 and changes
+  land as dated additive entries, often scoped to a single market. This artifact
+  records the recent window; the live changelog is the source of truth.
+docs: https://developers.lalamove.com/
+scheme:
+  granularity: month-dated entries
+  version_identifiers: false
+  current_version: v3
+  mechanism: URI path major version
+  detail: lifecycle/lalamove-lifecycle.yml
+  coverage: April 2026 back to March 2022
+window: 2025-03 to 2026-04
+entries:
+  - date: '2026-04'
+    latest: true
+    highlights:
+      - Update to an existing structure and a new webhook event added.
+  - date: '2025-11'
+    market: PH
+    highlights:
+      - New price breakdown item added in the Philippines.
+  - date: '2025-09'
+    highlights:
+      - API became available in Japan (JP market).
+      - Added a remarks array to the get order details endpoint.
+    additions:
+      - remarks array on GET /v3/orders/{orderId}
+  - date: '2025-08'
+    market: MY
+    highlights:
+      - Price breakdown precision length updated to 1 in Malaysia.
+  - date: '2025-04'
+    highlights:
+      - Order ID length changed from 12 digits to 19 digits.
+    breaking:
+      - >-
+        Order ID length change from 12 to 19 digits — breaks fixed-width storage
+        and any client-side length validation on orderId.
+  - date: '2025-03'
+    highlights:
+      - Updated logic for driver rejection.
+notes: >-
+  The changelog is narrative and month-granular rather than semver/date-versioned,
+  and entries do not carry explicit breaking-change labels. The April 2025 order ID
+  length change is classified as breaking here by derivation from its content, not
+  by a provider label.

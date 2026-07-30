@@ -1,0 +1,133 @@
+generated: '2026-07-19'
+method: searched
+source: https://developers.lalamove.com/ (Errors / error handling section)
+description: >-
+  Error catalog for the Lalamove Delivery API v3. Lalamove returns a custom
+  `errors` array envelope rather than RFC 9457 application/problem+json, pairing
+  an HTTP status class with a machine-readable ERR_ code. This artifact captures
+  both layers: the HTTP status semantics and the documented ERR_ code registry.
+format: custom
+rfc9457: false
+content_type: application/json
+envelope:
+  shape: '{"errors": [{"id": "ERR_CODE", "message": "...", "detail": "..."}]}'
+  fields:
+    id: machine-readable ERR_ code
+    message: human-readable message
+    detail: validation detail scoped to the offending field or condition
+  multiple: >-
+    The envelope is an array — one request may return several error entries, for
+    example when multiple fields fail validation.
+http_statuses:
+  - status: 400
+    meaning: Invalid request; ensure the body is valid JSON.
+    remediation: Validate JSON syntax and that the payload is wrapped in a top-level `data` object.
+  - status: 401
+    meaning: Authorization token incorrect.
+    remediation: >-
+      Re-derive the HMAC signature. Confirm the timestamp in the Authorization
+      header matches the timestamp used to build the raw signature string, that
+      the path segment is exact, and that the key/secret pair matches the
+      environment (pk_test/sk_test vs pk_prod/sk_prod).
+  - status: 402
+    meaning: Insufficient credit; wallet top-up required.
+    remediation: Top up the market wallet in the Partner Portal.
+  - status: 403
+    meaning: Request blocked for security reasons.
+    remediation: Contact partner.support@lalamove.com with the Request-ID.
+  - status: 404
+    meaning: Specified order or driver not found.
+    remediation: Verify the orderId/driverId and that the Market header matches the market the order was placed in.
+  - status: 422
+    meaning: Unprocessable entity; check error details.
+    remediation: Inspect the ERR_ code and `detail` field in the errors array.
+  - status: 429
+    meaning: Excessive requests.
+    remediation: >-
+      Back off using the per-endpoint RateLimit-Limit-Post{API} /
+      RateLimit-Remaining-Post{API} / RateLimit-Reset-Post{API} response headers.
+  - status: 500
+    meaning: Server error.
+    remediation: >-
+      Retry later with backoff. Because the API documents no idempotency key,
+      reconcile with GET /v3/orders/{orderId} before retrying a write to avoid
+      creating a duplicate delivery.
+error_codes:
+  - id: ERR_INSUFFICIENT_STOPS
+    meaning: Fewer than 2 stops supplied, or the request body structure is incorrect.
+    area: quotations
+  - id: ERR_TOO_MANY_STOPS
+    meaning: Exceeds the maximum of 1 pickup plus 15 drop-offs.
+    area: quotations
+  - id: ERR_INVALID_MARKET
+    meaning: Unsupported market specified.
+    area: auth
+    remediation: Use a supported UN/LOCODE Market value (HK, SG, MY, TH, PH, ID, VN, TW, JP, MX, BR).
+  - id: ERR_INVALID_PHONE_NUMBER
+    meaning: Phone number format fails validation for the market.
+    area: orders
+  - id: ERR_INVALID_SCHEDULE_TIME
+    meaning: The scheduleAt datetime is in the past.
+    area: quotations
+  - id: ERR_INVALID_SERVICE_TYPE
+    meaning: Invalid vehicle/service type for the specified market.
+    area: quotations
+    remediation: Enumerate valid service types for the market with GET /v3/cities.
+  - id: ERR_INVALID_SPECIAL_REQUEST
+    meaning: Special request is not valid for the chosen service type.
+    area: quotations
+    remediation: Enumerate valid special requests per service type with GET /v3/cities.
+  - id: ERR_OUT_OF_SERVICE_AREA
+    meaning: A delivery location falls outside the serviceable area.
+    area: quotations
+  - id: ERR_REVERSE_GEOCODE_FAILURE
+    meaning: Address geocoding failed.
+    area: quotations
+    remediation: Supply explicit lat/lng coordinates for the stop instead of relying on address geocoding.
+  - id: ERR_INSUFFICIENT_CREDIT
+    meaning: Insufficient wallet balance to place the order.
+    area: orders
+    http_status: 402
+  - id: ERR_RATE_LIMIT_EXCEEDED
+    meaning: Request rate limit exceeded.
+    area: platform
+    http_status: 429
+  - id: ERR_INVALID_QUOTATION_ID
+    meaning: Quotation ID is wrong or has expired.
+    area: orders
+    remediation: Quotations are short-lived — re-quote with POST /v3/quotations and place the order against the fresh quotationId.
+  - id: ERR_ORDER_NOT_FOUND
+    meaning: Order ID does not exist.
+    area: orders
+    http_status: 404
+  - id: ERR_INVALID_FIELD
+    meaning: Field format is incorrect.
+    area: validation
+  - id: ERR_MISSING_FIELD
+    meaning: A required field was omitted.
+    area: validation
+  - id: ERR_REQUIRED_FIELD
+    meaning: Required field validation failed.
+    area: validation
+  - id: ERR_CANCELLATION_FORBIDDEN
+    meaning: The order is not eligible for cancellation.
+    area: orders
+    remediation: Cancellation is only permitted within the policy window and before pickup.
+  - id: ERR_CHANGE_DRIVER
+    meaning: Driver change is not permitted for the current order status.
+    area: drivers
+    remediation: Driver change is allowed from 15 minutes after matching until pickup.
+  - id: ERR_INVALID_TIPS
+    meaning: Priority fee amount is invalid or lower than the previous priority fee.
+    area: priority-fee
+  - id: ERR_EXCEED_MIN_TIPS
+    meaning: Priority fee is below the minimum allowed for the market.
+    area: priority-fee
+  - id: ERR_EXCEED_MAX_TIPS
+    meaning: Priority fee exceeds the maximum allowed for the market.
+    area: priority-fee
+  - id: ERR_INVALID_RESPONSE
+    meaning: The configured webhook URL returned a non-200 response.
+    area: webhooks
+    remediation: Ensure the webhook receiver returns HTTP 200 promptly; Lalamove treats non-200 as a delivery failure.
+docs: https://developers.lalamove.com/

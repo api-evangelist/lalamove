@@ -1,0 +1,61 @@
+generated: '2026-07-19'
+method: generated
+source: >-
+  https://developers.lalamove.com/ — skills are grounded in the documented
+  Lalamove Delivery API v3 operations. Lalamove publishes no OpenAPI document and
+  no provider-authored Agent Skills or AGENTS.md (searched the developer portal
+  and all 70 public repositories in the lalamove GitHub organization), so
+  operations are referenced by method+path rather than operationId. No operation,
+  header, error code or status in these skills is invented.
+description: >-
+  Packaged Agent Skills for the Lalamove Delivery API v3, split along the two
+  marquee flows: booking a delivery (quote then order) and managing one in
+  flight (track, amend, escalate, cancel, webhooks).
+api: lalamove:lalamove-delivery-api
+skills:
+  - name: lalamove-book-delivery
+    file: lalamove-book-delivery.md
+    description: >-
+      Quote a route of stops and commit that quotation into a dispatched
+      courier order, with the HMAC signing, market-configuration and
+      no-idempotency retry discipline the flow requires.
+    operations:
+      - GET /v3/cities
+      - POST /v3/quotations
+      - GET /v3/quotations/{quotationId}
+      - POST /v3/orders
+      - GET /v3/orders/{orderId}
+    consequence: high
+  - name: lalamove-track-delivery
+    file: lalamove-track-delivery.md
+    description: >-
+      Track an in-flight delivery, read driver details, edit drop-offs before
+      pickup, add a priority fee, change the driver, cancel, and configure and
+      consume the order lifecycle webhooks.
+    operations:
+      - GET /v3/orders/{orderId}
+      - PATCH /v3/orders/{orderId}
+      - DELETE /v3/orders/{orderId}
+      - GET /v3/orders/{orderId}/drivers/{driverId}
+      - DELETE /v3/orders/{orderId}/drivers/{driverId}
+      - POST /v3/orders/{orderId}/priority-fee
+      - PATCH /v3/webhook
+    consequence: high
+cross_cutting_rules:
+  authentication: authentication/lalamove-authentication.yml
+  conventions: conventions/lalamove-conventions.yml
+  errors: errors/lalamove-problem-types.yml
+  webhooks: asyncapi/lalamove-delivery-webhooks.yml
+  data_model: data-model/lalamove-data-model.yml
+agent_safety_notes:
+  - >-
+    The API supports no idempotency key. Blind retries of POST /v3/orders or
+    POST /v3/orders/{orderId}/priority-fee can dispatch duplicate couriers or
+    stack fees. Always reconcile with GET /v3/orders/{orderId} first.
+  - >-
+    Order placement, cancellation, driver change and priority fees spend real
+    money from a prepaid market wallet and move physical vehicles. Require
+    explicit human confirmation; do not invoke autonomously.
+  - >-
+    Webhook payloads carry no documented signature. Treat them as a trigger to
+    re-read authoritative state, not as trusted input.

@@ -1,0 +1,70 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developers.lalamove.com/ (versioning via base path, changelog section,
+  onboarding), https://status.lalamove.com
+description: >-
+  Versioning, deprecation posture, support and status surface for the Lalamove
+  Delivery API. Lalamove versions by URI path major version (v3) and publishes a
+  dated changelog, but does not publish a formal deprecation policy or RFC 8594
+  Sunset/Deprecation headers — recorded here as a real gap.
+versioning:
+  scheme: uri-path
+  mechanism: major version segment in the base path
+  current: v3
+  example: https://rest.lalamove.com/v3/orders
+  header: null
+  docs: https://developers.lalamove.com/
+  notes: >-
+    Changes within v3 are additive and announced in the changelog (new fields,
+    new webhook events, new markets). Field-level behavior can vary by market —
+    e.g. price breakdown precision was changed for Malaysia in August 2025 and a
+    new price breakdown item was added for the Philippines in November 2025 —
+    so partners should treat market rollouts as a change axis alongside version.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  changelog: https://developers.lalamove.com/
+  notes: >-
+    No formal deprecation or sunset policy was found on the developer portal.
+    Breaking-ish changes observed in the changelog were communicated as dated
+    entries only (e.g. April 2025 order ID length changed from 12 to 19 digits —
+    a change that breaks fixed-width storage but shipped without a deprecation
+    window). Partners should size identifier columns defensively and subscribe to
+    the changelog.
+sla:
+  url: null
+  public_uptime_target: null
+  notes: >-
+    No public numeric uptime SLA was found; availability commitments appear to be
+    handled through partner agreements. Contact partner.support@lalamove.com.
+status_page: https://status.lalamove.com
+support:
+  email: partner.support@lalamove.com
+  portal: https://partnerportal.lalamove.com
+rate_limits: conventions/lalamove-conventions.yml
+onboarding:
+  steps:
+    - Integrate both POST /v3/quotations and POST /v3/orders.
+    - Test against the sandbox environment (recommended, not mandatory).
+    - Top up the production wallet to release production API credentials in the Partner Portal.
+    - Configure the webhook URL in the Partner Portal (if applicable).
+    - Notify partner.support@lalamove.com of production readiness.
+    - Begin submitting production orders.
+  docs: https://developers.lalamove.com/
+markets:
+  - {market: Hong Kong SAR, code: HK, languages: [en_HK, zh_HK]}
+  - {market: Singapore, code: SG, languages: [en_SG]}
+  - {market: Malaysia, code: MY, languages: [en_MY, ms_MY]}
+  - {market: Thailand, code: TH, languages: [th_TH, en_TH]}
+  - {market: Philippines, code: PH, languages: [en_PH]}
+  - {market: Indonesia, code: ID, languages: [en_ID, id_ID]}
+  - {market: Vietnam, code: VN, languages: [en_VN, vi_VN]}
+  - {market: Taiwan, code: TW, languages: [zh_TW]}
+  - {market: Japan, code: JP, languages: [en_JP, ja_JP]}
+  - {market: Mexico, code: MX, languages: [en_MX, es_MX]}
+  - {market: Brazil, code: BR, languages: [en_BR, pt_BR]}
+deprecated_operations: []

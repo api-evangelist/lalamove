@@ -1,0 +1,153 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developers.lalamove.com/ — the cross-cutting request/response
+  conventions that apply to every Lalamove Delivery API v3 endpoint (not any
+  single operation).
+description: >-
+  How the Lalamove Delivery API v3 behaves across every operation: authentication
+  style, market scoping, request tracing, versioning, envelope shape, error
+  envelope, and rate-limit signaling. Notably Lalamove does NOT document an
+  idempotency mechanism and does NOT document pagination — both absences are
+  recorded here as real findings rather than left blank.
+
+base_url: https://rest.lalamove.com/v3
+api_style: REST over HTTPS, JSON requests, JSON responses
+
+authentication:
+  scheme: "HMAC SHA256 request signing (Authorization: hmac {KEY}:{TIMESTAMP}:{SIGNATURE})"
+  key_types: [pk_test/sk_test (sandbox), pk_prod/sk_prod (production)]
+  docs: https://developers.lalamove.com/
+  detail: authentication/lalamove-authentication.yml
+
+market_scoping:
+  mechanism: Market request header
+  format: UN/LOCODE country code
+  values: [HK, SG, MY, TH, PH, ID, VN, TW, JP, MX, BR]
+  note: >-
+    Every request is scoped to exactly one market. Service types, special
+    requests, pricing, currency and language all vary by market, so the same
+    credential behaves differently under different Market values. Use
+    GET /v3/cities to enumerate what a market supports.
+
+idempotency:
+  supported: false
+  mechanism: null
+  evidence: >-
+    The documentation does not describe idempotency guarantees or retry
+    semantics. The required Request-ID header is documented as "a Nonce to be
+    used as a unique Request ID... sharing the Request ID with us will be the
+    fastest way" to troubleshoot — i.e. a diagnostic/tracing identifier, not a
+    deduplication key. Retrying POST /v3/orders after a timeout may therefore
+    create a duplicate delivery; reconcile with GET /v3/orders/{orderId} instead
+    of blind retry.
+  docs: https://developers.lalamove.com/
+
+pagination:
+  supported: false
+  evidence: >-
+    No pagination style, parameters or response fields are documented. The read
+    endpoints are single-resource lookups (quotation, order, driver) or a
+    market-scoped configuration list (GET /v3/cities), so there is no collection
+    endpoint that pages.
+
+request_tracing:
+  header: Request-ID
+  required: true
+  format: client-generated nonce/UUID (e.g. 211b9d85-a2cc-476f-8675-b61ec923cc27)
+  purpose: >-
+    Uniquely identifies a request for support escalation. Log it alongside every
+    call — Lalamove partner support uses it as the primary lookup key.
+
+versioning:
+  scheme: URI path major version
+  current: v3
+  mechanism: version segment in the base path (/v3)
+  sunset_header: false
+  detail: lifecycle/lalamove-lifecycle.yml
+
+envelope:
+  request:
+    shape: '{"data": { ... }}'
+    note: Request bodies wrap the payload in a top-level `data` object.
+  response:
+    shape: '{"data": { ... }}'
+    note: Successful responses wrap the payload in a top-level `data` object.
+
+error_envelope:
+  shape: '{"errors": [{"id": "ERR_CODE", "message": "...", "detail": "..."}]}'
+  fields:
+    id: machine-readable error code, ERR_ prefixed (e.g. ERR_INVALID_FIELD)
+    message: human-readable message
+    detail: validation detail for the specific field or condition
+  format: custom
+  rfc9457: false
+  note: >-
+    Errors are returned as an `errors` array, not as an RFC 9457
+    application/problem+json document. A single failed request may carry multiple
+    error entries (e.g. several field validation failures).
+  detail: errors/lalamove-problem-types.yml
+
+rate_limiting:
+  signaled: true
+  headers:
+    - "RateLimit-Limit-Post{API}"
+    - "RateLimit-Remaining-Post{API}"
+    - "RateLimit-Reset-Post{API}"
+  note: >-
+    Rate-limit headers are per-endpoint — the header name embeds the API being
+    called rather than using a single global RateLimit-* triple. Limits differ
+    between sandbox and production and between write and read endpoints.
+  status_on_exceed: 429
+  error_code: ERR_RATE_LIMIT_EXCEEDED
+  limits:
+    - endpoint: Get Quotation
+      sandbox_per_min: 30
+      production_per_min: 100
+    - endpoint: Get Quotation Details
+      sandbox_per_min: 50
+      production_per_min: 300
+    - endpoint: Place Order
+      sandbox_per_min: 30
+      production_per_min: 100
+    - endpoint: Get Order Details
+      sandbox_per_min: 50
+      production_per_min: 300
+    - endpoint: Get Driver Details
+      sandbox_per_min: 50
+      production_per_min: 300
+    - endpoint: Change Driver
+      sandbox_per_min: 30
+      production_per_min: 100
+    - endpoint: Cancel Order
+      sandbox_per_min: 30
+      production_per_min: 100
+    - endpoint: Add Priority Fee
+      sandbox_per_min: 30
+      production_per_min: 100
+    - endpoint: Get City Info
+      sandbox_per_min: 50
+      production_per_min: 300
+
+field_expansion:
+  supported: false
+  evidence: No expand/fields/sparse-fieldset parameters are documented.
+
+metadata:
+  supported: partial
+  note: >-
+    Orders accept partner-supplied reference fields (e.g. remarks on stops and a
+    remarks array on order details, added September 2025) rather than a general
+    free-form metadata map.
+
+events:
+  mechanism: webhooks (partner-configured URL)
+  configuration: PATCH /v3/webhook or the Partner Portal
+  detail: asyncapi/lalamove-delivery-webhooks.yml
+  requirement: >-
+    The receiving endpoint must return HTTP 200; a non-200 response raises
+    ERR_INVALID_RESPONSE.
+
+sandbox:
+  detail: sandbox/lalamove-sandbox.yml
+  host: https://rest.sandbox.lalamove.com/v3

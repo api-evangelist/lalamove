@@ -1,22 +1,88 @@
 aid: lalamove
 name: Lalamove
-description: 'Lalamove is a company surfaced as a portfolio company of hongshan and added to the API Evangelist
-  network as a stub for enrichment. Sector: technology. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: >-
+  Lalamove is a Hong Kong-founded on-demand logistics and same-day delivery
+  platform operating across Asia and Latin America, matching businesses and
+  consumers with a fleet of motorcycle, car, van and truck drivers. Its Delivery
+  API (v3) lets partners programmatically request quotations, place and edit
+  delivery orders, track assigned drivers in real time, add priority fees, and
+  receive order lifecycle webhooks. The REST API is authenticated with HMAC
+  SHA256 request signing, is segmented by market via a UN/LOCODE `Market`
+  header, and is available in eleven markets including Hong Kong SAR, Singapore,
+  Malaysia, Thailand, Philippines, Indonesia, Vietnam, Taiwan, Japan, Mexico and
+  Brazil. Lalamove publishes a sandbox environment, a Node.js SDK, multi-language
+  code examples, and a public status page.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://avatars.githubusercontent.com/u/20277126?v=4
 url: https://raw.githubusercontent.com/api-evangelist/lalamove/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - hongshan
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: developers.lalamove.com Delivery API v3 documented and enriched
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
 - Technology
-apis: []
+- Logistics
+- Delivery
+- Last Mile Delivery
+- Courier
+- Transportation
+- On Demand
+- Fleet
+- Shipping
+apis:
+- aid: lalamove:lalamove-delivery-api
+  name: Lalamove Delivery API
+  description: >-
+    The Lalamove Delivery API (v3) is a REST API for on-demand and scheduled
+    courier delivery. Partners request a quotation for a route of stops, place an
+    order against that quotation, retrieve order and driver details, edit
+    drop-off locations before pickup, cancel orders within the policy window,
+    change the assigned driver, and add a priority fee to speed up matching.
+    Order lifecycle events are pushed to a partner-configured webhook URL.
+    Requests are signed with HMAC SHA256 and scoped to a market with the
+    `Market` header.
+  humanURL: https://developers.lalamove.com/
+  baseURL: https://rest.lalamove.com/v3
+  tags:
+  - Delivery
+  - Logistics
+  - Courier
+  - Last Mile Delivery
+  - Webhooks
+  properties:
+  - type: Documentation
+    url: https://developers.lalamove.com/
+  - type: APIReference
+    url: https://developers.lalamove.com/
+  - type: Authentication
+    url: authentication/lalamove-authentication.yml
+  - type: Webhooks
+    url: asyncapi/lalamove-delivery-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/lalamove-problem-types.yml
+  - type: Conventions
+    url: conventions/lalamove-conventions.yml
+  - type: DataModel
+    url: data-model/lalamove-data-model.yml
+  - type: Sandbox
+    url: sandbox/lalamove-sandbox.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -25,3 +91,58 @@ maintainers:
 common:
 - type: Website
   url: https://lalamove.com
+- type: DeveloperPortal
+  url: https://developers.lalamove.com/
+- type: Documentation
+  url: https://developers.lalamove.com/
+- type: APIReference
+  url: https://developers.lalamove.com/
+- type: GettingStarted
+  url: https://developers.lalamove.com/
+- type: SignUp
+  url: https://partnerportal.lalamove.com/
+- type: Support
+  url: mailto:partner.support@lalamove.com
+- type: Blog
+  url: https://www.lalamove.com/en-hk/blog
+- type: GitHubOrganization
+  url: https://github.com/lalamove
+- type: StatusPage
+  url: https://status.lalamove.com
+- type: TermsOfService
+  url: https://www.lalamove.com/en-hk/terms-and-conditions
+- type: PrivacyPolicy
+  url: https://www.lalamove.com/en-hk/privacy-policy
+- type: Packages
+  url: packages/lalamove-packages.yml
+- type: SDKs
+  url: packages/lalamove-packages.yml
+- type: Authentication
+  url: authentication/lalamove-authentication.yml
+- type: Conventions
+  url: conventions/lalamove-conventions.yml
+- type: ErrorCatalog
+  url: errors/lalamove-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/lalamove-lifecycle.yml
+- type: ChangeLog
+  url: changelog/lalamove-changelog.yml
+- type: Sandbox
+  url: sandbox/lalamove-sandbox.yml
+- type: Conformance
+  url: conformance/lalamove-conformance.yml
+- type: DataModel
+  url: data-model/lalamove-data-model.yml
+- type: Webhooks
+  url: asyncapi/lalamove-delivery-webhooks.yml
+- type: LLMsTxt
+  url: llms/lalamove-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/lalamove-domain-security.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

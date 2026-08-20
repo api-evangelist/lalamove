@@ -41,6 +41,17 @@ tags:
 - Logistics
 - Delivery
 - Last Mile Delivery
+- Couriers
+- Transportation
+- On-Demand
+- Fleet
+- Shipping
+tags_raw:
+- Company
+- Technology
+- Logistics
+- Delivery
+- Last Mile Delivery
 - Courier
 - Transportation
 - On Demand
@@ -61,6 +72,12 @@ apis:
   humanURL: https://developers.lalamove.com/
   baseURL: https://rest.lalamove.com/v3
   tags:
+  - Delivery
+  - Logistics
+  - Couriers
+  - Last Mile Delivery
+  - Webhook
+  tags_raw:
   - Delivery
   - Logistics
   - Courier

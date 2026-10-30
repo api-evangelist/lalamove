@@ -64,58 +64,107 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Lalamove is a Hong Kong-founded on-demand logistics and same-day delivery platform operating across Asia and Latin America, matching businesses and consumers with a fleet of motorcycle, car, van and truck drivers.
+Lalamove is a Hong Kong-founded on-demand logistics and same-day delivery platform operating across Asia and Latin America, matching businesses and consumers with a fleet of motorcycle, car, van and truck drivers. Its Delivery API (v3) lets partners programmatically request quotations, place and edit delivery orders, track assigned drivers in real time, add priority fees, and receive order lifecycle webhooks. The REST API is authenticated with HMAC SHA256 request signing, is segmented by market via a UN/LOCODE `Market` header, and is available in eleven markets including Hong Kong SAR, Singapore, Malaysia, Thailand, Philippines, Indonesia, Vietnam, Taiwan, Japan, Mexico and Brazil. Lalamove publishes a sandbox environment, a Node.js SDK, multi-language code examples, and a public status page.
 
-Its **Delivery API (v3)** lets partners request quotations, place and edit delivery orders, track assigned drivers, add priority fees, and receive order lifecycle webhooks across eleven markets.
+**Areas:** Company · Technology · Logistics · Delivery · Last Mile Delivery · Couriers · Transportation · On-Demand · Fleet Management · Shipping
 
-- Developer portal: https://developers.lalamove.com/
-- Production base URL: `https://rest.lalamove.com/v3`
-- Sandbox base URL: `https://rest.sandbox.lalamove.com/v3`
-- Partner Portal (credentials, wallet, webhooks): https://partnerportal.lalamove.com
-- Status: https://status.lalamove.com
-- GitHub: https://github.com/lalamove
+## Lalamove on APIs.io
 
-Backed by: hongshan — https://lalamove.com
+Everything profiled for Lalamove is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/lalamove/](https://apis.io/providers/lalamove/)** — or go straight to one of the APIs or properties below.
 
-## API at a glance
+### APIs (1)
 
-| | |
+- [Lalamove Delivery API](https://apis.io/apis/lalamove/lalamove-delivery-api/) — The Lalamove Delivery API (v3) is a REST API for on-demand and scheduled courier delivery. Partners request a quotation for a route of stops, place an order…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Lalamove Delivery Webhooks](https://apis.io/asyncapis/lalamove/lalamove-delivery-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [lalamove](https://apis.io/servers/lalamove/lalamove/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Lalamove Authentication](https://apis.io/security/lalamove/lalamove-authentication/)
+- [Lalamove Domain Security](https://apis.io/security/lalamove/lalamove-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://lalamove.com)
+- [Documentation](https://developers.lalamove.com/)
+- [Getting started](https://developers.lalamove.com/)
+- [API reference](https://developers.lalamove.com/)
+- [Sign up](https://partnerportal.lalamove.com/)
+- [Blog](https://www.lalamove.com/en-hk/blog)
+- [Terms of service](https://www.lalamove.com/en-hk/terms-and-conditions)
+- [Privacy policy](https://www.lalamove.com/en-hk/privacy-policy)
+- [GitHub](https://github.com/lalamove)
+- [Status](https://status.lalamove.com)
+
+## API Evangelist rating
+
+**Kin Score 43.4** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
 |---|---|
-| Auth | HMAC SHA256 request signing (`Authorization: hmac {KEY}:{TIMESTAMP}:{SIGNATURE}`) |
-| Required headers | `Authorization`, `Market` (UN/LOCODE), `Request-ID`, `Content-Type` |
-| Markets | HK, SG, MY, TH, PH, ID, VN, TW, JP, MX, BR |
-| Envelope | Top-level `data` object on requests and responses |
-| Errors | Custom `{"errors":[{"id","message","detail"}]}` array — not RFC 9457 |
-| Versioning | URI path major version (`/v3`), month-dated changelog |
-| Idempotency | **Not supported** — no idempotency key documented |
-| Pagination | Not documented |
-| Spec | No published OpenAPI or AsyncAPI |
-| Events | 10 webhook events, partner-configured URL |
+| Discoverability | 73.2 |
+| Contract quality | 39.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 42.1 |
+| Developer ergonomics | 73.2 |
+| Access clarity | 21.1 |
 
-## Artifacts in this repo
+**Agent readiness 23.6** — agent-aware
 
-| Artifact | Path | Method |
-|---|---|---|
-| Authentication | `authentication/lalamove-authentication.yml` | searched |
-| Conventions | `conventions/lalamove-conventions.yml` | searched |
-| Error catalog | `errors/lalamove-problem-types.yml` | searched |
-| Webhooks | `asyncapi/lalamove-delivery-webhooks.yml` | searched |
-| Lifecycle | `lifecycle/lalamove-lifecycle.yml` | searched |
-| Changelog | `changelog/lalamove-changelog.yml` | searched |
-| Sandbox | `sandbox/lalamove-sandbox.yml` | searched |
-| Packages / SDKs | `packages/lalamove-packages.yml` | searched |
-| Conformance | `conformance/lalamove-conformance.yml` | derived |
-| Data model | `data-model/lalamove-data-model.yml` | derived |
-| MCP (candidate) | `mcp/lalamove-mcp.yml` | derived |
-| Well-known probe | `well-known/lalamove-well-known.yml` | searched (none found) |
-| Domain security | `security/lalamove-domain-security.yml` | probed |
-| llms.txt | `llms/lalamove-llms.txt` | generated |
-| Agent Skills | `skills/` | generated |
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
 
-## Notable findings
+**Regulatory alignment 24.5** — Horizontal (data, software, accessibility, platform)
 
-- **No idempotency key.** The required `Request-ID` header is documented as a support/tracing nonce, not a deduplication key. Blind-retrying `POST /v3/orders` can dispatch a duplicate courier and double-charge the prepaid wallet.
-- **No published OpenAPI or AsyncAPI**, despite a well-documented endpoint surface and a ten-event webhook catalog.
-- **No deprecation policy.** The April 2025 order ID widening from 12 to 19 digits shipped as a dated changelog line with no deprecation window.
-- **No webhook signature** is documented, so payloads cannot be cryptographically verified from the public docs.
-- **No security.txt, VDP or trust center** found on any Lalamove host. Note that `partnerportal.lalamove.com` returns HTTP 200 with an SPA HTML shell for every path — those are soft 404s, not documents.
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/lalamove/](https://apis.io/providers/lalamove/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Lalamove: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/lalamove/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
